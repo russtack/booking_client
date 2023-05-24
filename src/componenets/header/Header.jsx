@@ -12,10 +12,12 @@ import {
   faTaxi,
 } from "@fortawesome/free-solid-svg-icons";
 import "./header.css";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 
 export const Header = () => {
+  const [openDate, setOpenDate] = useState(false);
+
   const [date, setDate] = useState([
     {
       startDate: new Date(),
@@ -23,6 +25,25 @@ export const Header = () => {
       key: "selection",
     },
   ]);
+
+  const dateRangeRef = useRef();
+
+  useEffect(() => {
+    const handleOutsideClick = (event) => {
+      if (
+        dateRangeRef.current &&
+        !dateRangeRef.current.contains(event.target)
+      ) {
+        setOpenDate(false);
+      }
+    };
+
+    document.addEventListener("click", handleOutsideClick);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick);
+    };
+  }, []);
   return (
     <div className="header">
       <div className="headerContainer">
@@ -63,20 +84,27 @@ export const Header = () => {
               className="headerSearchInput"
             />
           </div>
-          <div className="headerSearchItem">
+          <div className="headerSearchItem" ref={dateRangeRef}>
             <FontAwesomeIcon icon={faCalendarDays} className="headerIcon" />
 
-            <span className="headerSearchText">{`${format(
-              date[0].startDate,
+            <span
+              onClick={() => {
+                setOpenDate(!openDate);
+              }}
+              className="headerSearchText"
+            >{`${format(date[0].startDate, "MM/dd/yyyy")} to ${format(
+              date[0].endDate,
               "MM/dd/yyyy"
             )}`}</span>
-            <DateRange
-              editableDateInputs={true}
-              onChange={(item) => setDate([item.selection])}
-              moveRangeOnFirstSelection={false}
-              ranges={date}
-              className="date"
-            />
+            {openDate && (
+              <DateRange
+                editableDateInputs={true}
+                onChange={(item) => setDate([item.selection])}
+                moveRangeOnFirstSelection={false}
+                ranges={date}
+                className="date"
+              />
+            )}
           </div>
           <div className="headerSearchItem">
             <FontAwesomeIcon icon={faPerson} className="headerIcon" />
