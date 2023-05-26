@@ -14,6 +14,7 @@ import {
 import "./header.css";
 import React, { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
+import { useNavigate } from "react-router-dom";
 
 export const Header = ({ type }) => {
   const [openOptions, setOpenOptions] = useState(false);
@@ -22,6 +23,9 @@ export const Header = ({ type }) => {
     children: 0,
     room: 1,
   });
+
+  const navigate = useNavigate();
+
   const handleOption = (name, operation) => {
     setOptions((prev) => {
       return {
@@ -31,6 +35,8 @@ export const Header = ({ type }) => {
     });
   };
   const [openDate, setOpenDate] = useState(false);
+
+  const [destination, setDestination] = useState("");
 
   const [date, setDate] = useState([
     {
@@ -62,6 +68,11 @@ export const Header = ({ type }) => {
       document.removeEventListener("click", handleOutsideClick);
     };
   }, []);
+
+  const handleSearch = () => {
+    navigate("/hotels", { state: { destination, date, options } });
+  };
+
   return (
     <div className="header">
       <div
@@ -102,6 +113,9 @@ export const Header = ({ type }) => {
               <div className="headerSearchItem">
                 <FontAwesomeIcon icon={faBed} className="headerIcon" />
                 <input
+                  onChange={(e) => {
+                    setDestination(e.target.value);
+                  }}
                   type="text"
                   placeholder="Where are you going?"
                   className="headerSearchInput"
@@ -126,6 +140,7 @@ export const Header = ({ type }) => {
                     moveRangeOnFirstSelection={false}
                     ranges={date}
                     className="date"
+                    minDate={new Date()}
                   />
                 )}
               </div>
@@ -208,7 +223,9 @@ export const Header = ({ type }) => {
                 )}
               </div>
               <div className="headerSearchItem">
-                <button className="headerBtn">Search</button>
+                <button onClick={handleSearch} className="headerBtn">
+                  Search
+                </button>
               </div>
             </div>
           </>
