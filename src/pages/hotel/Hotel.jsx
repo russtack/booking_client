@@ -2,9 +2,33 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Header } from "../../componenets/header/Header";
 import { Navbar } from "../../componenets/navbar/Navbar";
 import "./hotel.css";
-import { faLocationDot } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCircleArrowLeft,
+  faCircleArrowRight,
+  faCircleXmark,
+  faLocationDot,
+} from "@fortawesome/free-solid-svg-icons";
+import MailList from "../../componenets/maiList/MailList";
+import Footer from "../../componenets/footer/Footer";
+import { useState } from "react";
 
 export const Hotel = () => {
+  const [slideNumber, setSlideNumber] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+  const handleOpen = (i) => {
+    setOpenModal(true);
+    setSlideNumber(i);
+  };
+  const handleMove = (dir) => {
+    let newSlideNumber;
+    if (dir === "l") {
+      newSlideNumber = slideNumber === 0 ? 5 : slideNumber - 1;
+    } else {
+      newSlideNumber = slideNumber === 5 ? 0 : slideNumber + 1;
+    }
+    setSlideNumber(newSlideNumber);
+  };
+
   const photos = [
     {
       src: "https://cf.bstatic.com/xdata/images/hotel/max1280x900/261707778.jpg?k=56ba0babbcbbfeb3d3e911728831dcbc390ed2cb16c51d88159f82bf751d04c6&o=&hp=1",
@@ -31,7 +55,36 @@ export const Hotel = () => {
       <Navbar />
       <Header type="list" />
       <div className="hotelContainer">
+        {openModal && (
+          <div className="slider">
+            <FontAwesomeIcon
+              icon={faCircleXmark}
+              className="close"
+              onClick={() => {
+                setOpenModal(false);
+              }}
+            />
+            <FontAwesomeIcon
+              icon={faCircleArrowLeft}
+              className="arrow"
+              onClick={() => {
+                handleMove("l");
+              }}
+            />
+            <div className="sliderWrapper">
+              <img src={photos[slideNumber].src} alt="" className="sliderImg" />
+            </div>
+            <FontAwesomeIcon
+              icon={faCircleArrowRight}
+              className="arrow"
+              onClick={() => {
+                handleMove("l");
+              }}
+            />
+          </div>
+        )}
         <div className="hotelWrapper">
+          <button className="bookNow">Reserve or Book Now</button>
           <h1 className="hotelTitle">Grand Hotel</h1>
           <div className="hotelAddress">
             <FontAwesomeIcon icon={faLocationDot} />
@@ -46,15 +99,49 @@ export const Hotel = () => {
           <div className="hotelImages">
             {photos.map((photo, i) => (
               <div className="hotelImgWrapper" key={i}>
-                <img src={photo.src} alt="" className="hotelImg" />
+                <img
+                  onClick={() => {
+                    handleOpen(i);
+                  }}
+                  src={photo.src}
+                  alt=""
+                  className="hotelImg"
+                />
               </div>
             ))}
           </div>
           <div className="hotelDetails">
-            <div className="hotelDetails Texts"></div>
-            <div className="hotelDetailsPrice"></div>
+            <div className="hotelDetailsTexts">
+              <h1 className="hotelTitle">Stay in the heart of City</h1>
+              <p className="hotelDesc">
+                Located a 5-minute walk from St. Florian's Gate in Krakow, Tower
+                Street Apartments has accommodations with air conditioning and
+                free WiFi. The units come with hardwood floors and feature a
+                fully equipped kitchenette with a microwave, a flat-screen TV,
+                and a private bathroom with shower and a hairdryer. A fridge is
+                also offered, as well as an electric tea pot and a coffee
+                machine. Popular points of interest near the apartment include
+                Cloth Hall, Main Market Square and Town Hall Tower. The nearest
+                airport is John Paul II International Kraków–Balice, 16.1 km
+                from Tower Street Apartments, and the property offers a paid
+                airport shuttle service.
+              </p>
+            </div>
+            <div className="hotelDetailsPrice">
+              <h1>Perfect for a 9-night stay!</h1>
+              <span>
+                Located in the real heart of Krakow, this property has an
+                excellent location score of 9.8!
+              </span>
+              <h2>
+                <b>$945</b> (9 nights)
+              </h2>
+              <button>Reserve or Book Now!</button>
+            </div>
           </div>
         </div>
+        <MailList />
+        <Footer />
       </div>
     </div>
   );
