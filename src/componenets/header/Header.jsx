@@ -51,21 +51,27 @@ export const Header = ({ type }) => {
 
   useEffect(() => {
     const handleOutsideClick = (event) => {
-      if (
-        dateRangeRef.current &&
-        !dateRangeRef.current.contains(event.target) &&
-        optionsRef.current &&
-        !optionsRef.current.contains(event.target)
-      ) {
-        setOpenDate(false);
+      if (optionsRef.current && !optionsRef.current.contains(event.target)) {
         setOpenOptions(false);
       }
     };
 
+    const handleOutsideClickDate = (event) => {
+      if (
+        dateRangeRef.current &&
+        !dateRangeRef.current.contains(event.target)
+      ) {
+        setOpenDate(false);
+      }
+    };
+
     document.addEventListener("click", handleOutsideClick);
+    document.addEventListener("click", handleOutsideClickDate);
 
     return () => {
       document.removeEventListener("click", handleOutsideClick);
+
+      document.removeEventListener("click", handleOutsideClickDate);
     };
   }, []);
 
